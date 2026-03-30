@@ -6,6 +6,19 @@ let allVisits = [];
 let visitsChart = null;
 let currentRange = 7;
 
+// ── Utilitaire fetch Supabase ──
+async function sbFetch(path, opts = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      ...opts.headers
+    },
+    ...opts
+  });
+  return res;
+}
 
 // ── Initialisation ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -58,9 +71,8 @@ window.addEventListener('beforeunload', () => {
 async function loadNavigationBadges() {
   try {
     // Charger les messages non lus
-    const msgRes = await apiFetch('messages');
-    const msgResult = await msgRes.json();
-    const messages = msgResult.data || [];
+    const msgRes = await sbFetch('messages?select=lu');
+    const messages = await msgRes.json();
     const unreadCount = Array.isArray(messages) ? messages.filter(m => !m.lu).length : 0;
     
     const unreadBadge = document.getElementById('visites-unread-badge');
@@ -81,9 +93,8 @@ async function loadNavigationBadges() {
     }
     
     // Charger les visites d'aujourd'hui
-    const visitsRes = await apiFetch('visits');
-    const visResult = await visitsRes.json();
-    const visits = visResult.data || [];
+    const visitsRes = await sbFetch('visits?select=visited_at');
+    const visits = await visitsRes.json();
     const today = new Date().toDateString();
     const todayVisits = Array.isArray(visits) ? visits.filter(v => new Date(v.visited_at).toDateString() === today).length : 0;
     
@@ -120,14 +131,18 @@ async function loadVisits() {
   visitsList.innerHTML = '<div class="loading-spinner"></div>';
 
   try {
-    console.log('Appel apiFetch pour visits...');
-    const res = await apiFetch('visits');
-    console.log('Réponse apiFetch:', res.status, res.statusText);
-    const result = await res.json();
-    console.log('Données reçues:', result);
-
-    if (!res.ok) throw new Error(result.error || 'Erreur serveur');
-    const data = result.data || [];
+    console.log('Appel sbFetch pour visits...');
+    // Test d'abord avec une requête plus simple pour vérifier les permissions
+    const res = await sbFetch('visits?select=id&limit=1');
+    console.log('Réponse sbFetch (test simple):', res.status, res.statusText);
+    const testData = await res.json();
+    console.log('Données test (simple):', testData);
+    
+    // Si le test fonctionne, faire la requête complète
+    const fullRes = await sbFetch('visits?select=*&order=visited_at.desc&limit=500');
+    console.log('Réponse sbFetch (complète):', fullRes.status, fullRes.statusText);
+    const data = await fullRes.json();
+    console.log('Données reçues:', data);
 
     if (!Array.isArray(data)) throw new Error(data?.message || 'Réponse inattendue');
 
