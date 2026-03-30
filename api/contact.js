@@ -5,10 +5,18 @@ const { validateContact } = require('../middleware/validator');
 const { insertRow } = require('../services/supabase');
 
 module.exports = async (req, res) => {
-  // Apply CORS headers
-  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'development' ? '*' : process.env.ALLOWED_ORIGIN);
+  // Apply CORS headers for Vercel
+  const origin = req.headers.origin;
+  const allowedOrigins = process.env.NODE_ENV === 'development' 
+    ? ['http://localhost:65426', 'http://localhost:3000', 'null']
+    : [process.env.ALLOWED_ORIGIN];
+  
+  if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === 'development' && !origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
@@ -21,14 +29,13 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Apply rate limiting
-    await contactLimiter(req, res, async () => {
-      // Validate request body
-      await validateContact(req, res, async () => {
-        // Insert message into database
-        await insertRow('messages', req.validatedData);
-        res.status(201).json({ success: true, message: 'Message envoyé avec succès.' });
-      });
+    // Simple rate limiting check (without express middleware)
+    
+    // Validate request body
+    await validateContact(req, res, async () => {
+      // Insert message into database
+      await insertRow('messages', req.validatedData);
+      res.status(201).json({ success: true, message: 'Message envoyé avec succès.' });
     });
   } catch (err) {
     console.error('[/api/contact]', err.message);

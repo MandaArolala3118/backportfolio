@@ -4,10 +4,18 @@ const adminAuth = require('../../middleware/adminAuth');
 const { getRows } = require('../../services/supabase');
 
 module.exports = async (req, res) => {
-  // Apply CORS headers
-  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'development' ? '*' : process.env.ALLOWED_ORIGIN);
+  // Apply CORS headers for Vercel
+  const origin = req.headers.origin;
+  const allowedOrigins = process.env.NODE_ENV === 'development' 
+    ? ['http://localhost:65426', 'http://localhost:3000', 'null']
+    : [process.env.ALLOWED_ORIGIN];
+  
+  if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === 'development' && !origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
