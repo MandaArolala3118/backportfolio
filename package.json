@@ -1,11 +1,12 @@
 {
   "name": "portfolio-backend",
   "version": "1.0.0",
-  "description": "Backend proxy Node.js pour le portfolio — protège les clés Supabase",
+  "description": "Backend pour le portfolio — protège les clés Supabase (compatible Vercel)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "echo 'No build step required for Vercel functions'"
   },
   "dependencies": {
     "cors": "^2.8.5",
