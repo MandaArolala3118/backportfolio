@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const adminAuth = require('../../middleware/adminAuth');
 const { getRows } = require('../../services/supabase');
+const { trackEvent } = require('../../services/analytics');
 
 module.exports = async (req, res) => {
   // Apply CORS headers for Vercel
@@ -31,6 +32,7 @@ module.exports = async (req, res) => {
     // Apply admin authentication
     await adminAuth(req, res, async () => {
       const data = await getRows('visits', '?select=*&order=visited_at.desc&limit=500');
+      await trackEvent('Admin Visits Viewed', { visitCount: data?.length || 0 });
       res.json({ success: true, data });
     });
   } catch (err) {

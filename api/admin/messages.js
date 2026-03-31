@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const adminAuth = require('../../middleware/adminAuth');
 const { getRows, patchRow, deleteRow } = require('../../services/supabase');
+const { trackEvent } = require('../../services/analytics');
 
 module.exports = async (req, res) => {
   // Apply CORS headers for Vercel
@@ -30,6 +31,7 @@ module.exports = async (req, res) => {
       // GET /api/admin/messages - Récupérer tous les messages
       if (req.method === 'GET') {
         const data = await getRows('messages', '?select=*&order=created_at.desc');
+        await trackEvent('Admin Messages Viewed', { messageCount: data?.length || 0 });
         return res.json({ success: true, data });
       }
 
@@ -45,6 +47,7 @@ module.exports = async (req, res) => {
         }
 
         await patchRow('messages', `?id=eq.${id}`, { lu });
+        await trackEvent('Admin Message Updated', { messageId: id, markedAsRead: lu });
         return res.json({ success: true });
       }
 
@@ -55,6 +58,7 @@ module.exports = async (req, res) => {
         }
 
         await deleteRow('messages', `?id=eq.${id}`);
+        await trackEvent('Admin Message Deleted', { messageId: id });
         return res.json({ success: true });
       }
 

@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const { getRows } = require('../../services/supabase');
+const { trackEvent } = require('../../services/analytics');
 
 module.exports = async (req, res) => {
   // Apply CORS headers for Vercel
@@ -39,8 +40,13 @@ module.exports = async (req, res) => {
     );
 
     if (!Array.isArray(data) || data.length === 0) {
+      // Track failed login attempt
+      await trackEvent('Admin Login Failed', { username });
       return res.status(401).json({ success: false, error: 'Identifiants incorrects.' });
     }
+
+    // Track successful login
+    await trackEvent('Admin Login Success', { username });
 
     res.json({
       success:     true,
