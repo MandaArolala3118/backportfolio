@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
           </td>
           <td style="vertical-align: middle;">
             <p style="margin: 0 0 4px 0; font-size: 18px; font-weight: bold; color: #1a1a1a;">
-              Andrianina Manda Arolala
+              ANDRIANINA Manda Arolala
             </p>
             <p style="margin: 0; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 1.2px;">
               Développeur
@@ -127,7 +127,7 @@ module.exports = async (req, res) => {
         <tr>
           <td style="padding: 4px 0; font-size: 13px;">
             <span style="color: #aaaaaa; font-size: 12px; margin-right: 8px;">LINKEDIN</span>
-            <a href="https://www.linkedin.com/in/andrianina-manda-arolala-150777297/"
+            <a href="https://www.linkedin.com/in/manda-arolala-andrianina-00241428b/"
               style="color: #0077b5; text-decoration: none;">andrianina-manda-arolala</a>
           </td>
         </tr>
