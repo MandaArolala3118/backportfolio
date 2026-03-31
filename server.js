@@ -16,8 +16,12 @@ const corsOptions = {
       // Dev : tout autoriser (null, localhost, fichier local)
       return callback(null, true);
     }
-    // Prod : seulement le domaine déclaré dans .env
-    if (origin === process.env.ALLOWED_ORIGIN) {
+    // Prod : autoriser plusieurs domaines depuis .env
+    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : [process.env.ALLOWED_ORIGIN];
+    
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     return callback(null, false);

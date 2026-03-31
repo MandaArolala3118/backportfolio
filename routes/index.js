@@ -122,4 +122,54 @@ router.delete('/admin/messages/:id', adminAuth, async (req, res) => {
   }
 });
 
+// ── GET /api/admin/sites ───────────────────────────────────────
+// Lister les sites autorisés
+router.get('/admin/sites', adminAuth, async (req, res) => {
+  try {
+    const data = await getRows('sites', '?select=*&order=created_at.desc');
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error('[/api/admin/sites]', err.message);
+    res.status(500).json({ success: false, error: 'Erreur serveur.' });
+  }
+});
+
+// ── POST /api/admin/sites ──────────────────────────────────────
+// Ajouter un site autorisé
+router.post('/admin/sites', adminAuth, async (req, res) => {
+  const { name, domain, description } = req.body;
+  
+  if (!name || !domain) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Nom et domaine sont requis.' 
+    });
+  }
+
+  try {
+    await insertRow('sites', { name, domain, description });
+    res.status(201).json({ 
+      success: true, 
+      message: 'Site ajouté avec succès.' 
+    });
+  } catch (err) {
+    console.error('[/api/admin/sites POST]', err.message);
+    res.status(500).json({ success: false, error: 'Erreur serveur.' });
+  }
+});
+
+// ── DELETE /api/admin/sites/:id ─────────────────────────────────
+// Supprimer un site autorisé
+router.delete('/admin/sites/:id', adminAuth, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await deleteRow('sites', `?id=eq.${id}`);
+    res.json({ success: true, message: 'Site supprimé avec succès.' });
+  } catch (err) {
+    console.error('[/api/admin/sites DELETE]', err.message);
+    res.status(500).json({ success: false, error: 'Erreur serveur.' });
+  }
+});
+
 module.exports = router;
