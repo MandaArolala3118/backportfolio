@@ -74,10 +74,7 @@ module.exports = async (req, res) => {
         subject: subject,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #333;">${subject}</h2>
-            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p style="color: #666; line-height: 1.6;">${message}</p>
-            </div>
+            <p>${message}</p>
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
             <p style="color: #999; font-size: 12px;">
               Email envoyé depuis le portfolio - ${new Date().toLocaleDateString('fr-FR')}
