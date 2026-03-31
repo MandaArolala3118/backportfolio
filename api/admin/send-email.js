@@ -86,7 +86,7 @@ module.exports = async (req, res) => {
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td style="padding-right: 16px; vertical-align: middle;">
-            <img src="VOTRE_URL_PHOTO" width="72" height="72"
+            <img src="https://media.licdn.com/dms/image/v2/D4D03AQFZIyvm0DipSw/profile-displayphoto-crop_800_800/B4DZiKxKRnHYAM-/0/1754674802102?e=1776297600&v=beta&t=RQpiIWCRRM-mC5mxjNM1kozfXEjk3Pzn6kZdzHZgqBU" width="72" height="72"
               style="border-radius: 50%; display: block;">
           </td>
           <td style="vertical-align: middle;">
@@ -94,7 +94,7 @@ module.exports = async (req, res) => {
               Andrianina Manda Arolala
             </p>
             <p style="margin: 0; font-size: 12px; color: #888888; text-transform: uppercase; letter-spacing: 1.2px;">
-              Développeur Web
+              Développeur
             </p>
           </td>
         </tr>
