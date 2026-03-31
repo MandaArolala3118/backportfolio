@@ -7,6 +7,31 @@ const { insertRow, getRows, patchRow, deleteRow } = require('../services/supabas
 
 const router = express.Router();
 
+// ── CORS middleware for all routes ───────────────────────────────
+router.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isDev = process.env.NODE_ENV === 'development';
+  const allowedOrigins = isDev 
+    ? ['http://localhost:65426', 'http://localhost:3000', 'null']
+    : process.env.ALLOWED_ORIGIN 
+      ? process.env.ALLOWED_ORIGIN.split(',').map(o => o.trim())
+      : [process.env.ALLOWED_ORIGIN];
+  
+  if (allowedOrigins.includes(origin) || (isDev && !origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
 // ══════════════════════════════════════════════════════════════
 // ROUTES PUBLIQUES (portfolio visiteur)
 // ══════════════════════════════════════════════════════════════
