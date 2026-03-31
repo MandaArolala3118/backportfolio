@@ -3,6 +3,7 @@ require('dotenv').config();
 const { contactLimiter } = require('../middleware/rateLimiter');
 const { validateContact } = require('../middleware/validator');
 const { insertRow } = require('../services/supabase');
+const { trackEvent } = require('../services/analytics');
 
 module.exports = async (req, res) => {
   // Apply CORS headers for Vercel
@@ -35,6 +36,13 @@ module.exports = async (req, res) => {
     await validateContact(req, res, async () => {
       // Insert message into database
       await insertRow('messages', req.validatedData);
+      
+      // Track contact form submission
+      await trackEvent('Contact Form Submitted', {
+        hasEmail: !!req.validatedData.email,
+        hasName: !!req.validatedData.nom
+      });
+      
       res.status(201).json({ success: true, message: 'Message envoyé avec succès.' });
     });
   } catch (err) {

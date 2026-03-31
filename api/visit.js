@@ -1,3 +1,5 @@
+const { trackEvent } = require('../services/analytics');
+
 module.exports = async (req, res) => {
   const origin = req.headers.origin;
   const allowedOrigin = process.env.ALLOWED_ORIGIN;
@@ -15,6 +17,11 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+
+  // Track visit event
+  await trackEvent('Portfolio Visit', {
+    origin: origin || 'unknown'
+  });
 
   res.status(200).json({ ok: true });
 };
