@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
           <div style="font-family: Arial, sans-serif;margin: 0 auto;">
               <p>${message}</p>
             
-            <div style="margin-top: 40px; padding: 20px; background-color: #ffffff; border: 1px solid #e9ecef; border-radius: 8px; max-width: 600px;">
+            <div style="margin-top: 40px; padding: 20px; background-color: #FFBFA0; border: 2px solid #FFBFA0; border-radius: 8px; max-width: 600px;">
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td style="vertical-align: top; padding-right: 20px;">
@@ -84,7 +84,7 @@ module.exports = async (req, res) => {
                   </td>
                   <td style="vertical-align: top;">
                     <h3 style="margin: 0 0 10px 0; color: #2c3e50;">Andrianina Manda Arolala</h3>
-                    <p style="margin: 5px 0; color: #555;">
+                    <p style="margin: 5px 0; color: #333;">
                       <span style="display: inline-flex; align-items: center;">
                         <img src="https://cdn-icons-png.flaticon.com/24/724/724664.png" alt="Téléphone" style="width: 16px; height: 16px; margin-right: 5px;"> +261 33 34 775 48
                       </span><br>
