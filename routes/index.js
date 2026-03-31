@@ -197,4 +197,83 @@ router.delete('/admin/sites/:id', adminAuth, async (req, res) => {
   }
 });
 
+// ── POST /api/admin/send-email ───────────────────────────────────
+// Envoyer un email (protégé par admin auth)
+router.post('/admin/send-email', adminAuth, async (req, res) => {
+  const { email, subject, message } = req.body;
+
+  // Validation des champs requis
+  if (!email || !subject || !message) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Email, sujet et message sont requis.' 
+    });
+  }
+
+  // Validation email simple
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Format d\'email invalide.' 
+    });
+  }
+
+  try {
+    const nodemailer = require('nodemailer');
+
+    // Vérification des variables d'environnement
+    if (!process.env.MAILSEND || !process.env.PASSWORD) {
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Configuration email manquante.' 
+      });
+    }
+
+    // Configuration du transporteur Gmail
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.MAILSEND,
+        pass: process.env.PASSWORD
+      }
+    });
+
+    // Options de l'email
+    const mailOptions = {
+      from: process.env.MAILSEND,
+      to: email,
+      subject: subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">${subject}</h2>
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="color: #666; line-height: 1.6;">${message}</p>
+          </div>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+          <p style="color: #999; font-size: 12px;">
+            Email envoyé depuis le portfolio - ${new Date().toLocaleDateString('fr-FR')}
+          </p>
+        </div>
+      `
+    };
+
+    // Envoi de l'email
+    await transporter.sendMail(mailOptions);
+
+    console.log(`[Email] Envoyé à ${email} avec le sujet: ${subject}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Email envoyé avec succès.' 
+    });
+  } catch (err) {
+    console.error('[/api/admin/send-email]', err.message);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erreur lors de l\'envoi de l\'email.' 
+    });
+  }
+});
+
 module.exports = router;
