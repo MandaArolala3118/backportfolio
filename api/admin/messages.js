@@ -8,7 +8,9 @@ module.exports = async (req, res) => {
   const origin = req.headers.origin;
   const allowedOrigins = process.env.NODE_ENV === 'development' 
     ? ['http://localhost:65426', 'http://localhost:3000', 'null']
-    : [process.env.ALLOWED_ORIGIN];
+    : process.env.ALLOWED_ORIGIN 
+      ? process.env.ALLOWED_ORIGIN.split(',').map(o => o.trim())
+      : [process.env.ALLOWED_ORIGIN];
   
   if (allowedOrigins.includes(origin) || (process.env.NODE_ENV === 'development' && !origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin || '*');
